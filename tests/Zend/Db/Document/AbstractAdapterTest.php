@@ -17,14 +17,14 @@ class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
     public function testLazyLoad()
     {
         $adapter = new AbstractAdapterMock(array());
-        $this->assertFalse($adapter->getConnected());
+        $this->assertFalse($adapter->isConnected());
     }
 
     public function testLazyLoadConnected()
     {
         $adapter = new AbstractAdapterMock(array());
-        $adapter->setConnection('test value');
-        $this->assertTrue($adapter->getConnected());
+        $adapter->_connect();
+        $this->assertTrue($adapter->isConnected());
     }
 
     public function testSetConnection()
@@ -32,6 +32,12 @@ class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
         $adapter = new AbstractAdapterMock(array());
         $adapter->setConnection('test value');
         $this->assertEquals($adapter->getConnection(), 'test value');
+    }
+
+    public function testGetCollection()
+    {
+        $adapter = new AbstractAdapterMock(array());
+        $this->assertType('Zend\\Db\\Document\\Collection', $adapter->getCollection('test'));
     }
 }
 
