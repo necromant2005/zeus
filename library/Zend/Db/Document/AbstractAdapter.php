@@ -19,6 +19,7 @@ abstract class AbstractAdapter
 
     public function getConnection()
     {
+        if (!$this->isConnected()) $this->_connect();
         return $this->_connection;
     }
 
@@ -27,8 +28,8 @@ abstract class AbstractAdapter
         return !is_null($this->_connection);
     }
 
-    abstract function _connect();
+    abstract protected function _connect();
 
-    abstract function getCollection($name);
+    abstract public function getCollection($name);
 }
 
