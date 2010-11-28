@@ -19,6 +19,7 @@ abstract class AbstractAdapter
 
     public function getConnection()
     {
+        $this->_connect();
         return $this->_connection;
     }
 
