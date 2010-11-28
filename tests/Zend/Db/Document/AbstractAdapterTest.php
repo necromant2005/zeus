@@ -27,6 +27,13 @@ class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($adapter->isConnected());
     }
 
+    public function testLazyLoadWhenGetConnectionCalls()
+    {
+        $adapter = new AbstractAdapterMock(array());
+        $adapter->getConnection();
+        $this->assertTrue($adapter->isConnected());
+    }
+
     public function testSetConnection()
     {
         $adapter = new AbstractAdapterMock(array());

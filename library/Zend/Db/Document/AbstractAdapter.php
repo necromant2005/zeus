@@ -20,6 +20,7 @@ abstract class AbstractAdapter
     public function getConnection()
     {
         if (!$this->isConnected()) $this->_connect();
+        $this->_connect();
         return $this->_connection;
     }
 

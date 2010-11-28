@@ -11,6 +11,7 @@ class AbstractAdapterMock extends DbDocument\AbstractAdapter
 {
     public function _connect()
     {
+        if ($this->isConnected()) return ;
         $this->_connection = 'something';
     }
 
