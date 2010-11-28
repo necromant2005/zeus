@@ -1,9 +1,6 @@
 <?php
 namespace Test;
 
-require_once __DIR__ . '/../../../../../library/Zend/Db/Document/AbstractAdapter.php';
-require_once __DIR__ . '/../../../../../library/Zend/Db/Document/Adapter/Redis.php';
-
 use Zend\Db\Document as DbDocument;
 
 class RedisTest extends \PHPUnit_Framework_TestCase

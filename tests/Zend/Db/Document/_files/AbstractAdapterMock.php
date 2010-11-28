@@ -3,8 +3,6 @@ namespace Test;
 
 use Zend\Db\Document as DbDocument;
 
-require_once __DIR__ . '/../../../../../library/Zend/Db/Document/AbstractAdapter.php';
-
 require_once __DIR__ . '/CollectionMock.php';
 
 class AbstractAdapterMock extends DbDocument\AbstractAdapter
