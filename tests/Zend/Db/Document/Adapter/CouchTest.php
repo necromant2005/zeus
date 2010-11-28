@@ -24,7 +24,7 @@ class CouchTest extends \PHPUnit_Framework_TestCase
             'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_COUCH_PORT,
             'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_COUCH_DATABASE,
         ));
-        $this->assertType('', $adapter->getConnection());
+        $this->assertType('Zend\\Rest\\Client\\RestClient', $adapter->getConnection());
     }
 }
 

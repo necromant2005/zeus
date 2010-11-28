@@ -31,9 +31,6 @@ function ZendTest_Autoloader($class)
             }
             $file = 'Zend/';
             break;
-        case 'ZendTest':
-            $file = __DIR__ . '/Zend/';
-            break;
         default:
             $file = false;
             break;
@@ -41,8 +38,17 @@ function ZendTest_Autoloader($class)
 
     if ($file) {
         $file .= implode('/', $segments) . '.php';
-        if (file_exists($file)) {
-            return include_once $file;
+        if ($file[0]=='/') {
+            if (file_exists($file)) {
+                return include_once $file;
+            }
+        } else {
+            foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
+                $pathname = realpath($path) . '/' . $file;
+                if (file_exists($pathname)) {
+                    return include_once $pathname;
+                }
+            }
         }
     }
     return false;
