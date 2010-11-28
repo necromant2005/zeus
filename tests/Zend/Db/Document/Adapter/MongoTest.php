@@ -23,7 +23,12 @@ class MongoTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConnection()
     {
-        $adapter = new DbDocument\Adapter\Mongo(array());
+        $adapter = new DbDocument\Adapter\Mongo(array(
+            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
+            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
+            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
+        ));
+        $this->assertType('Mongo', $adapter->getConnection());
     }
 }
 
