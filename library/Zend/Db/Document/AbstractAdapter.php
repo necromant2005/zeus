@@ -7,7 +7,7 @@ abstract class AbstractAdapter
 
     protected $_connection = null;
 
-    public function __construct(array $options)
+    public function __construct(array $options=array())
     {
         $this->_options = $options;
     }

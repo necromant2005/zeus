@@ -16,7 +16,7 @@ class AbstractAdapterMock extends DbDocument\AbstractAdapter
 
     public function getCollection($name)
     {
-        return new CollectionMock($name);
+         return new CollectionMock($this, $name);
     }
 }
 
