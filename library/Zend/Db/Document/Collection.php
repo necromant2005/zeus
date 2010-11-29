@@ -7,9 +7,9 @@ interface Collection
 
     public function get($name);
 
-    public function put($data);
+    public function put($name, array $data);
 
-    public function post($name, $data);
+    public function post(array $data);
 
     public function delete($name);
 
