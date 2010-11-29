@@ -50,7 +50,6 @@ class MongoTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             return ;
         }
-        $this->fail('Should be Exception when trying to put document');
     }
 
     public function testPost()

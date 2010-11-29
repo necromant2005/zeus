@@ -24,7 +24,7 @@ class Mongo implements DbDocument\Collection
 
     public function put($name, array $data)
     {
-        return $this->_adapter->put($this->_name, $data);
+        return $this->_adapter->put($this->_name, $name, $data);
     }
 
     public function post(array $data)
