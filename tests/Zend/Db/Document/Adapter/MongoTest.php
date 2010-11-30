@@ -5,6 +5,16 @@ use Zend\Db\Document as DbDocument;
 
 class MongoTest extends \PHPUnit_Framework_TestCase
 {
+    private function _getCollection()
+    {
+        $adapter = new DbDocument\Adapter\Mongo(array(
+            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
+            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
+            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
+        ));
+        return $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION);
+    }
+
     public function setUp()
     {
         if (!defined('TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_ENABLED') || !TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_ENABLED) {
@@ -39,14 +49,8 @@ class MongoTest extends \PHPUnit_Framework_TestCase
 
     public function testPut()
     {
-        $adapter = new DbDocument\Adapter\Mongo(array(
-            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
-            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
-            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
-        ));
         try {
-            $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-                ->put('test', array('nane'=>'peter'));
+            $this->_getCollection()->put('test', array('nane'=>'peter'));
         } catch (\Exception $e) {
             return ;
         }
@@ -54,42 +58,23 @@ class MongoTest extends \PHPUnit_Framework_TestCase
 
     public function testPost()
     {
-        $adapter = new DbDocument\Adapter\Mongo(array(
-            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
-            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
-            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
-        ));
-        $this->assertRegExp('/^[a-f0-9]{24}$/', $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->post(array('nane'=>'peter')));
+        $this->assertRegExp('/^[a-f0-9]{24}$/', $this->_getCollection()->post(array('nane'=>'peter')));
     }
 
     public function testGet()
     {
-        $adapter = new DbDocument\Adapter\Mongo(array(
-            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
-            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
-            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
-        ));
-        $name = $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->post(array('name'=>'peter'));
-        $this->assertEquals($adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->get($name), array('_id'=>new \MongoId($name), 'name'=>'peter'));
+        $name = $this->_getCollection()->post(array('name'=>'peter'));
+        $document = $this->_getCollection()->get($name);
+        $this->assertType('Zend\\Db\\Document\\Document\\Mongo', $document);
+        $this->assertEquals($document->getId(), $name);
+        $this->assertEquals($document->toArray(), array('name'=>'peter'));
     }
 
     public function testDelete()
     {
-        $adapter = new DbDocument\Adapter\Mongo(array(
-            'host' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_HOST,
-            'port' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_PORT,
-            'dbname' => TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_DATABASE,
-        ));
-        $name = $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->post(array('name'=>'peter'));
-        $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->delete($name);
-        $this->assertNull($adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_MONGO_COLLECTION)
-            ->get($name));
+        $name = $this->_getCollection()->post(array('name'=>'peter'));
+        $this->_getCollection()->delete($name);
+        $this->assertNull($this->_getCollection()->get($name));
     }
-
 }
 

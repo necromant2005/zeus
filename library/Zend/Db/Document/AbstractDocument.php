@@ -19,7 +19,7 @@ abstract class AbstractDocument
 
     public function setId($id)
     {
-        $this->_id = $id;
+        $this->_id = (string)$id;
         return $this;
     }
 
@@ -55,15 +55,14 @@ abstract class AbstractDocument
     public function setFromArray($data)
     {
         foreach ($data as $name=>$value) {
-            $this->{$name} = $value;
+            $this->__set($name, $value);
         }
         return $this;
     }
 
     public function setPrimary($name, $value)
     {
-        $methodName = $this->_mapPrimaryFields[$name];
-        return $this->{$methodName}($value);
+        return  call_user_func(array($this, $this->_mapPrimaryFields[$name]), $value);
     }
 }
 

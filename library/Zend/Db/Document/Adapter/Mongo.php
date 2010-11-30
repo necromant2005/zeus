@@ -57,13 +57,19 @@ class Mongo extends DbDocument\AbstractAdapter
     public function findOne($collectionName, array $query)
     {
         $this->_connect();
-        return $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->findOne($query);
+        return $this->_parseResponse($collectionName, $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->findOne($query));
     }
 
     public function find($collectionName, array $query)
     {
         $this->_connect();
         return $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->find($query);
+    }
+
+    protected function _parseResponse($collectionName, $response)
+    {
+        if (is_null($response)) return null;
+        return new DbDocument\Document\Mongo($this->getCollection($collectionName), $response);
     }
 }
 
