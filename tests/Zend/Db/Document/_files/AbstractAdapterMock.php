@@ -3,7 +3,7 @@ namespace Test;
 
 use Zend\Db\Document as DbDocument;
 
-require_once __DIR__ . '/CollectionMock.php';
+require_once __DIR__ . '/AbstractCollectionMock.php';
 
 class AbstractAdapterMock extends DbDocument\AbstractAdapter
 {
@@ -15,7 +15,7 @@ class AbstractAdapterMock extends DbDocument\AbstractAdapter
 
     public function getCollection($name)
     {
-         return new CollectionMock($this, $name);
+         return new AbstractCollectionMock($this, $name);
     }
 }
 

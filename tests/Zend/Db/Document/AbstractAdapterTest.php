@@ -44,7 +44,7 @@ class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
     public function testGetCollection()
     {
         $adapter = new AbstractAdapterMock(array());
-        $this->assertType('Zend\\Db\\Document\\Collection', $adapter->getCollection('test'));
+        $this->assertType('Zend\\Db\\Document\\AbstractCollection', $adapter->getCollection('test'));
     }
 }
 
