@@ -54,6 +54,7 @@ class MongoTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             return ;
         }
+        $this->fail('Expect exception');
     }
 
     public function testPost()

@@ -61,16 +61,21 @@ class RedisTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($document->toArray(), array('name'=>'peter'));
     }
 
-    public function t_estPost()
+    public function testPost()
     {
-        $this->assertRegExp('/^[a-f0-9]{24}$/', $this->_getCollection()->post(array('nane'=>'peter')));
+        try {
+            $this->_getCollection()->post(array('nane'=>'peter'));
+        } catch (\Exception $e) {
+            return ;
+        }
+        $this->fail('Expect exception');
     }
 
-    public function t_estDelete()
+    public function testDelete()
     {
-        $name = $this->_getCollection()->post(array('name'=>'peter'));
-        $this->_getCollection()->delete($name);
-        $this->assertNull($this->_getCollection()->get($name));
+        $this->_getCollection()->put('test', array('name'=>'peter'));
+        $this->_getCollection()->delete('test');
+        $this->assertNull($this->_getCollection()->get('test'));
     }
 }
 

@@ -22,10 +22,7 @@ class Redis extends DbDocument\AbstractAdapter
 
     public function post($collectionName, array $data)
     {
-        $this->_connect();
-        $value = serialize($data);
-        $this->_write('RPUSH' . " $collectionName " . strlen($value) . "\r\n$value\r\n");
-        return $this->_read();
+        throw new \Exception('Post not supports for ' . get_class($this));
     }
 
     public function put($collectionName, $name, array $data)
@@ -38,14 +35,15 @@ class Redis extends DbDocument\AbstractAdapter
 
     public function get($collectionName, $name)
     {
-        $document = new DbDocument\Document\Redis($this->getCollection($collectionName),
-            $this->_call("GET $name\r\n"));
+        $response = $this->_call("GET $name\r\n");
+        if (is_null($response)) return null;
+        $document = new DbDocument\Document\Redis($this->getCollection($collectionName), $response);
         return $document->setId($name);
     }
 
     public function delete($collectionName, $name)
     {
-        $this->_connect();
+        $this->_call("DEL $name\r\n");
     }
 
     public function findOne($collectionName, array $query)
@@ -62,7 +60,7 @@ class Redis extends DbDocument\AbstractAdapter
     {
         $this->_connect();
         $this->_write($request);
-        return $this->_parse($this->_read());
+        return $this->_parse();
     }
 
     protected function _write($data)
@@ -71,47 +69,43 @@ class Redis extends DbDocument\AbstractAdapter
         fwrite($this->_connection, $data);
     }
 
-    protected function _read()
+    protected function _read($length)
     {
         $this->_connect();
-        $buffer = '';
-        while (!feof($this->_connection)) {
-            $byte = fread($this->_connection, 1);
-            $buffer .= $byte;
-            if ($byte=="\n") break;
-        }
+        $buffer = fread($this->_connection, $length);
         return $buffer;
     }
 
-    public function _parse($response)
+    protected function _readWhile()
     {
-        switch (substr($response, 0, 1)) {
+        $buffer = '';
+        do {
+            $byte = $this->_read(1);
+            $buffer .= $byte;
+        } while (!in_array($byte, array("\n", "\r")));
+        $buffer = substr($buffer, 0, -1);
+        return $buffer;
+    }
+
+    public function _parse()
+    {
+        switch ($this->_read(1)) {
             case '-':
                 return false;
             case '+':
                 return true;
             case '$':
-                if ($response=='$-1') return null;
-                $bytes = (int)substr($response, 1);
-                return unserialize(substr($this->_read(), 0, $bytes));
+                $buffer = $this->_read(2);
+                if ($buffer=='-1') return null;
+                $buffer .= $this->_readWhile();
+                $this->_read(1);
+                return unserialize($this->_read((int)$buffer));
             case ':':
-                throw new \Exception(': ' . $response);
-                $i = strpos($data, '.') !== false ? (int)$data : (float)$data;
-                if ((string)$i != $data)
-                    trigger_error("Cannot convert data '$c$data' to integer", E_USER_ERROR);
-                return $i;
+                return (int)$this->_readWhile();
             case '*':
-                throw new \Exception('* ' . $response);
-                $num = (int)$data;
-                if ((string)$num != $data)
-                    trigger_error("Cannot convert multi-response header '$data' to integer", E_USER_ERROR);
-                $result = array();
-                for ($i=0; $i<$num; $i++)
-                    $result[] =& $this->get_response();
-                return $result;
+                throw new \Exception('* ');
             default:
-                throw new \Exception('Unknow ' . $response);
-                trigger_error("Invalid reply type byte: '$c'");
+                throw new \Exception('Unknow result');
         }
     }
 }
