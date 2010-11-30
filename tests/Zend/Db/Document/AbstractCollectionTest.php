@@ -5,7 +5,7 @@ require_once __DIR__ . '/_files/AbstractCollectionMock.php';
 
 use Zend\Db\Document as DbDocument;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 {
     public function testInit()
     {
