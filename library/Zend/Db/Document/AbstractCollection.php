@@ -13,6 +13,11 @@ abstract class AbstractCollection
         $this->_name = $name;
     }
 
+    public function getAdapter()
+    {
+        return $this->_adapter;
+    }
+
     public function get($name)
     {
         return $this->_adapter->get($this->_name, $name);

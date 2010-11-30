@@ -7,9 +7,20 @@ abstract class AbstractDocument
 
     protected $_id = '';
 
+    protected $_mapPrimaryFields = array();
+
+    protected $_collection = null;
+
+    public function __construct(AbstractCollection $collection, array $data)
+    {
+        $this->_collection = $collection;
+        $this->setFromArray($data);
+    }
+
     public function setId($id)
     {
         $this->_id = $id;
+        return $this;
     }
 
     public function getId()
@@ -25,12 +36,34 @@ abstract class AbstractDocument
 
     public function __set($name, $value)
     {
+        if (array_key_exists($name, $this->_mapPrimaryFields)) {
+            return $this->setPrimary($name, $value);
+        }
         return $this->_data[$name] = $value;
     }
 
     public function __isset($name)
     {
-        return array_key_exixts($name, $this->_data);
+        return array_key_exists($name, $this->_data);
+    }
+
+    public function toArray()
+    {
+        return $this->_data;
+    }
+
+    public function setFromArray($data)
+    {
+        foreach ($data as $name=>$value) {
+            $this->{$name} = $value;
+        }
+        return $this;
+    }
+
+    public function setPrimary($name, $value)
+    {
+        $methodName = $this->_mapPrimaryFields[$name];
+        return $this->{$methodName}($value);
     }
 }
 

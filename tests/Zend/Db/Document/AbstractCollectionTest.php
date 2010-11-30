@@ -13,6 +13,13 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $collection = new AbstractCollectionMock($stub, 'test');
     }
 
+    public function testGetAdapter()
+    {
+        $stub = $this->getMockForAbstractClass('\\Zend\\Db\\Document\\AbstractAdapter');
+        $collection = new AbstractCollectionMock($stub, 'test');
+        $this->assertType(get_class($stub), $collection->getAdapter());
+    }
+
     public function testGet()
     {
         $stub = $this->getMockForAbstractClass('\\Zend\\Db\\Document\\AbstractAdapter');

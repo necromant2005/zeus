@@ -7,11 +7,10 @@ require_once __DIR__ . '/AbstractDocumentMock.php';
 
 class AbstractCollectionMock extends DbDocument\AbstractCollection
 {
-    public function __construct(DbDocument\AbstractAdapter $adapter, $name){}
 
     public function get($name)
     {
-        return new AbstractDocumentMock($this);
+        return new AbstractDocumentMock($this, array());
     }
 
     public function put($name, array $data){}
