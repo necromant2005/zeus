@@ -43,5 +43,38 @@ class RiakTest extends \PHPUnit_Framework_TestCase
         ));
         $this->assertType('Zend\\Db\\Document\\Collection\\Riak', $adapter->getCollection(TESTS_ZEND_DB_DOCUMENT_ADAPTER_RIAK_COLLECTION));
     }
+
+    public function testPut()
+    {
+        $this->assertTrue($this->_getCollection()->put('test', array('name'=>'peter')));
+        $this->assertEquals($this->_getCollection()->get('test')->toArray(), array('name'=>'peter'));
+    }
+
+    public function testPost()
+    {
+        $this->assertRegExp('/^[a-zA-Z0-9]{27}$/', $this->_getCollection()->post(array('nane'=>'peter')));
+    }
+
+    public function testGet()
+    {
+        $name = $this->_getCollection()->post(array('name'=>'peter'));
+        $document = $this->_getCollection()->get($name);
+        $this->assertType('Zend\\Db\\Document\\Document\\Riak', $document);
+        $this->assertEquals($document->getId(), $name);
+        $this->assertEquals($document->toArray(), array('name'=>'peter'));
+    }
+
+    public function testGetNoExists()
+    {
+        $document = $this->_getCollection()->get('some-non-exists');
+        $this->assertNull($document);
+    }
+
+    public function testDelete()
+    {
+        $name = $this->_getCollection()->post(array('name'=>'peter'));
+        $this->assertTrue($this->_getCollection()->delete($name));
+        $this->assertNull($this->_getCollection()->get($name));
+    }
 }
 

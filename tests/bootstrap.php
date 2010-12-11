@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL ^ E_NOTICE);
+
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(__DIR__ . '/../library'),
