@@ -15,7 +15,7 @@ class Riak extends DbDocument\AbstractAdapter
 
     public function getCollection($name)
     {
-
+        return new DbDocument\Collection\Riak($this, $name);
     }
 }
 
