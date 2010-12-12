@@ -92,7 +92,7 @@ class MongoTest extends \PHPUnit_Framework_TestCase
         $this->_getCollection()->post(array('name'=>'peter'));
         $cursor = $this->_getCollection()->find(array('name'=>'peter'));
         $this->assertType('Zend\\Db\\Document\\Cursor\\Mongo', $cursor);
-        $this->assertGreaterThan($cursor->count(), 2);
+        $this->assertGreaterThan(2, $cursor->count());
         $cursor->rewind();
         $document = $cursor->current();
         $this->assertType('Zend\\Db\\Document\\Document\\Mongo', $document);

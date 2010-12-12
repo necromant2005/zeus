@@ -4,6 +4,7 @@ namespace Zend\Db\Document;
 abstract class AbstractCursor implements \Iterator, \Countable
 {
     protected $_collection = null;
+    protected $_rowset     = null;
 
     public function __construct(AbstractCollection $collection, $rowset)
     {

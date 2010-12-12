@@ -33,7 +33,7 @@ class Mongo extends DbDocument\AbstractCursor
 
     public function count()
     {
-        return count($this->rowset);
+        return $this->_rowset->count();
     }
 }
 

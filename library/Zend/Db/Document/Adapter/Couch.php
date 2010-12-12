@@ -7,6 +7,7 @@ class Couch extends DbDocument\AbstractAdapter
 {
     const PRIMARY = '_id';
     const REVISION = '_rev';
+    const PATH_TEMPORARY_VIEW = '_temp_view';
 
     const PARSE_PRIMARY = 'id';
     const PARSE_REVISION = 'rev';
@@ -89,11 +90,42 @@ class Couch extends DbDocument\AbstractAdapter
     public function findOne($collectionName, array $query)
     {
         $this->_connect();
+        $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=1&descending=true',
+            \Zend\Json\Encoder::encode($this->_makeQuery($query)));
+        try {
+            $rowset = new DbDocument\Cursor\Couch($this->getCollection($collectionName), $this->_parseResponse($response));
+            $rowset->rewind();
+            return $rowset->current();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function find($collectionName, array $query)
     {
         $this->_connect();
+        $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=10&descending=true',
+            \Zend\Json\Encoder::encode($this->_makeQuery($query)));
+        try {
+            return new DbDocument\Cursor\Couch($this->getCollection($collectionName), $this->_parseResponse($response));
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    private function _makeQuery(array $query, array $fields=array())
+    {
+        $request = array(
+            'language' => 'javascript',
+            'map' => 'function(doc){ emit(null, doc); }',
+        );
+        if (empty($query)) return $request;
+        $where = array();
+        foreach ($query as $name=>$value) {
+            $where[] = $name . '="' . addslashes($value) . '"';
+        }
+        $request['map'] = 'function(doc){ if(' . join('&&', $where) . '){ emit(null, doc); }}';
+        return $request;
     }
 }
 
