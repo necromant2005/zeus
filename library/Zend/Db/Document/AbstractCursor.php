@@ -17,16 +17,33 @@ abstract class AbstractCursor implements \Iterator, \Countable
     }
 
     public function rewind()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
+
     public function next()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
+
     public function key()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
+
     public function current()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
+
     public function valid()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
+
     public function count()
-    {}
+    {
+        throw new \Exception('Should implement ' . __METHOD__);
+    }
 }
 
