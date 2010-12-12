@@ -12,7 +12,8 @@ class Voldemort extends DbDocument\AbstractAdapter
         if (!is_resource($this->_connection)) {
             throw new \Exception($errstr, $errno);
         }
-        stream_set_blocking($this->_connection, false);
+        fwrite($this->_connection, 'pb0');
+        if (fread($this->_connection, 2)!='ok') throw new \Exception('Server doent accept protocol');
     }
 
     public function getCollection($name)
