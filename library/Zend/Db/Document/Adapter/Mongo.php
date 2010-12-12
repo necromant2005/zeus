@@ -54,16 +54,17 @@ class Mongo extends DbDocument\AbstractAdapter
         return $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->remove(array(self::PRIMARY => new \MongoId($name)));
     }
 
-    public function findOne($collectionName, array $query)
+    public function findOne($collectionName, array $query, array $fields=array())
     {
         $this->_connect();
-        return $this->_parseResponse($collectionName, $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->findOne($query));
+        return $this->_parseResponse($collectionName, $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->findOne($query, $fields));
     }
 
-    public function find($collectionName, array $query)
+    public function find($collectionName, array $query, $fields=array())
     {
         $this->_connect();
-        return $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->find($query);
+        return new DbDocument\Cursor\Mongo($this->getCollection($collectionName),
+            $this->_connection->selectDB($this->getDbName())->selectCollection($collectionName)->find($query, $fields));
     }
 
     protected function _parseResponse($collectionName, $response)

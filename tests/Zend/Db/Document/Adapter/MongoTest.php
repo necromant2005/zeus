@@ -77,5 +77,26 @@ class MongoTest extends \PHPUnit_Framework_TestCase
         $this->_getCollection()->delete($name);
         $this->assertNull($this->_getCollection()->get($name));
     }
+
+    public function testFindOne()
+    {
+        $this->_getCollection()->post(array('name'=>'peter'));
+        $document = $this->_getCollection()->findOne(array('name'=>'peter'));
+        $this->assertType('Zend\\Db\\Document\\Document\\Mongo', $document);
+        $this->assertEquals($document->toArray(), array('name'=>'peter'));
+    }
+
+    public function testFind()
+    {
+        $this->_getCollection()->post(array('name'=>'peter'));
+        $this->_getCollection()->post(array('name'=>'peter'));
+        $cursor = $this->_getCollection()->find(array('name'=>'peter'));
+        $this->assertType('Zend\\Db\\Document\\Cursor\\Mongo', $cursor);
+        $this->assertGreaterThan($cursor->count(), 2);
+        $cursor->rewind();
+        $document = $cursor->current();
+        $this->assertType('Zend\\Db\\Document\\Document\\Mongo', $document);
+        $this->assertEquals($document->toArray(), array('name'=>'peter'));
+    }
 }
 
