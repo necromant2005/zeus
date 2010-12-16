@@ -7,6 +7,7 @@ class Riak extends DbDocument\AbstractAdapter
 {
     const PRIMARY = '_id';
     const ETAG    = '_etag';
+    const DATA    = '_data';
 
     protected function _connect()
     {
@@ -61,14 +62,49 @@ class Riak extends DbDocument\AbstractAdapter
         return $response->isSuccessful();
     }
 
-    public function findOne($collectionName, array $query)
+    public function findOne($collectionName, array $query, array $fields=array())
     {
         $this->_connect();
+        $request = $this->_buildRequest($collectionName, $query, $fields);
+        $response = $this->_connection->restPost('/mapred', \Zend\Json\Encoder::encode($request));
+        if ($response->isError()) return null;
+        $items = \Zend\Json\Decoder::decode($response->getBody());
+        $item = array_shift($items);
+        $document = new DbDocument\Document\Riak($this->getCollection($collectionName), $item[self::DATA]);
+        $document->setId($item[self::PRIMARY]);
+        return $document;
     }
 
-    public function find($collectionName, array $query)
+    public function find($collectionName, array $query, array $fields=array())
     {
         $this->_connect();
+        $request = $this->_buildRequest($collectionName, $query, $fields);
+        $response = $this->_connection->restPost('/mapred', \Zend\Json\Encoder::encode($request));
+        if ($response->isError()) return null;
+        return new DbDocument\Cursor\Riak($this->getCollection($collectionName), \Zend\Json\Decoder::decode($response->getBody()));
+    }
+
+    private function _buildRequest($collectionName, array $query, array $fields=array())
+    {
+        $request = array(
+            'inputs' => $collectionName,
+            'query' => array(
+                array(
+                    'map' => array(
+                        'language' => 'javascript',
+                        'source'   => 'function(v) { var keys = Riak.mapValuesJson(v)[0]; return [{' . self::PRIMARY . ': v.key, ' . self::DATA . ': keys}]; }',
+                        'keep'     => true,
+                    )
+                )
+            )
+        );
+        if (empty($query)) return $request;
+        $where = array();
+        foreach ($query as $name=>$value) {
+            $where[] = $name . '="' . addslashes($value) . '"';
+        }
+        $request['query'][0]['map']['source'] = 'function(v){ var keys = Riak.mapValuesJson(v)[0]; if(' . join('&&', $where) . ') {return [{' . self::PRIMARY . ': v.key, ' . self::DATA . ': keys}];} else { return []; } }';
+        return $request;
     }
 }
 

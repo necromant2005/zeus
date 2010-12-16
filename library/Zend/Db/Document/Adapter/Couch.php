@@ -91,7 +91,7 @@ class Couch extends DbDocument\AbstractAdapter
     {
         $this->_connect();
         $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=1&descending=true',
-            \Zend\Json\Encoder::encode($this->_makeQuery($query)));
+            \Zend\Json\Encoder::encode($this->_buildQuery($query)));
         try {
             $rowset = new DbDocument\Cursor\Couch($this->getCollection($collectionName), $this->_parseResponse($response));
             $rowset->rewind();
@@ -105,7 +105,7 @@ class Couch extends DbDocument\AbstractAdapter
     {
         $this->_connect();
         $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=10&descending=true',
-            \Zend\Json\Encoder::encode($this->_makeQuery($query)));
+            \Zend\Json\Encoder::encode($this->_buildQuery($query)));
         try {
             return new DbDocument\Cursor\Couch($this->getCollection($collectionName), $this->_parseResponse($response));
         } catch (\Exception $e) {
@@ -113,7 +113,7 @@ class Couch extends DbDocument\AbstractAdapter
         }
     }
 
-    private function _makeQuery(array $query, array $fields=array())
+    private function _buildQuery(array $query, array $fields=array())
     {
         $request = array(
             'language' => 'javascript',
