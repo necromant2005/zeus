@@ -5,14 +5,19 @@ use Zend\Db\Document as DbDocument;
 
 class Redis extends DbDocument\AbstractAdapter
 {
+    const CONNECTION_TIMEOUT = 1;
+    const STREAM_TIMEOUT = 1;
+
     protected function _connect()
     {
         if ($this->isConnected()) return;
-        $this->_connection = fsockopen($this->_options['host'], $this->_options['port'], $errno, $errstr);
+        $this->_connection = stream_socket_client('tcp://' . $this->_options['host'] . ':' . $this->_options['port'],
+            $errno, $errstr, self::CONNECTION_TIMEOUT);
         if (!is_resource($this->_connection)) {
             throw new \Exception($errstr, $errno);
         }
-        stream_set_blocking($this->_connection, true);
+        stream_set_blocking($this->_connection, false);
+        stream_set_timeout($this->_connection, 0, self::STREAM_TIMEOUT);
     }
 
     public function getCollection($name)
@@ -36,7 +41,7 @@ class Redis extends DbDocument\AbstractAdapter
     public function get($collectionName, $name)
     {
         $response = $this->_call("GET $name\r\n");
-        if (is_null($response)) return null;
+        if (!$response) return null;
         $document = new DbDocument\Document\Redis($this->getCollection($collectionName), $response);
         return $document->setId($name);
     }
@@ -48,12 +53,12 @@ class Redis extends DbDocument\AbstractAdapter
 
     public function findOne($collectionName, array $query)
     {
-        $this->_connect();
+        throw new \Exception('FindOne not supports for ' . get_class($this));
     }
 
     public function find($collectionName, array $query)
     {
-        $this->_connect();
+        throw new \Exception('Find not supports for ' . get_class($this));
     }
 
     protected function _call($request)
@@ -66,7 +71,7 @@ class Redis extends DbDocument\AbstractAdapter
     protected function _write($data)
     {
         $this->_connect();
-        fwrite($this->_connection, $data);
+        if (!fwrite($this->_connection, $data)) throw new Exception('Writing data is failed');
     }
 
     protected function _read($length)
@@ -76,15 +81,13 @@ class Redis extends DbDocument\AbstractAdapter
         return $buffer;
     }
 
-    protected function _readWhile()
+    protected function _readLine($length=100)
     {
-        $buffer = '';
-        do {
-            $byte = $this->_read(1);
-            $buffer .= $byte;
-        } while (!in_array($byte, array("\n", "\r")));
-        $buffer = substr($buffer, 0, -1);
-        return $buffer;
+        $read  = array($this->_connection);
+        $write = null;
+        $except = null;
+        stream_select($read, $write, $except, 0);
+        return $buffer = stream_get_line($this->_connection, 100, "\r\n");
     }
 
     public function _parse()
@@ -95,15 +98,13 @@ class Redis extends DbDocument\AbstractAdapter
             case '+':
                 return true;
             case '$':
-                $buffer = $this->_read(2);
-                if ($buffer=='-1') return null;
-                $buffer .= $this->_readWhile();
-                $this->_read(1);
-                return unserialize($this->_read((int)$buffer));
+                $count = (int)$this->_readLine();
+                $buffer = fread($this->_connection, $count+2);
+                return unserialize($buffer);
             case ':':
-                return (int)$this->_readWhile();
+                return $this->_readLine();
             case '*':
-                throw new \Exception('* ');
+                throw new \Exception('* - is unknow result');
             default:
                 throw new \Exception('Unknow result');
         }

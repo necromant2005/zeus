@@ -77,5 +77,25 @@ class RedisTest extends \PHPUnit_Framework_TestCase
         $this->_getCollection()->delete('test');
         $this->assertNull($this->_getCollection()->get('test'));
     }
+
+    public function testFindOne()
+    {
+        try {
+            $this->_getCollection()->findOne(array('nane'=>'peter'));
+        } catch (\Exception $e) {
+            return ;
+        }
+        $this->fail('Expect exception');
+    }
+
+    public function testFind()
+    {
+        try {
+            $this->_getCollection()->find(array('nane'=>'peter'));
+        } catch (\Exception $e) {
+            return ;
+        }
+        $this->fail('Expect exception');
+    }
 }
 
