@@ -71,10 +71,16 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->_query->getReduceFunction(), '1234');
     }
 
+    public function testFindOne()
+    {
+        $query = new AbstractQueryMock(new AbstractCollectionMock(new AbstractAdapterMock, 'test'));
+        $this->assertEquals($query->findOne(), array('test', $query, array()));
+    }
+
     public function testFind()
     {
         $query = new AbstractQueryMock(new AbstractCollectionMock(new AbstractAdapterMock, 'test'));
-        $query->find();
+        $this->assertEquals($query->find(), array('test', $query, array()));
     }
 }
 

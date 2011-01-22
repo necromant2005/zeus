@@ -38,7 +38,7 @@ abstract class AbstractCollection
         return $this->_adapter->delete($this->_name, $name);
     }
 
-    public function findOne(array $query, array $fields=array())
+    public function findOne($query, array $fields=array())
     {
         return $this->_adapter->findOne($this->_name, $query, $fields);
     }

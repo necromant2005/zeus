@@ -16,6 +16,11 @@ abstract class AbstractQuery
         $this->_collection = $collection;
     }
 
+    public function findOne()
+    {
+        return $this->_collection->findOne($this);
+    }
+
     public function find()
     {
         return $this->_collection->find($this);

@@ -20,12 +20,12 @@ class AbstractAdapterMock extends DbDocument\AbstractAdapter
 
     public function findOne($collectionName, $query, array $fields=array())
     {
-        return null;
+        return array($collectionName, $query, $fields);
     }
 
     public function find($collectionName, $query, array $fields=array())
     {
-        return null;
+        return array($collectionName, $query, $fields);
     }
 }
 

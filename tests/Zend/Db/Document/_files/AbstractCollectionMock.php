@@ -12,15 +12,5 @@ class AbstractCollectionMock extends DbDocument\AbstractCollection
     {
         return new AbstractDocumentMock($this, array());
     }
-
-    public function put($name, array $data){}
-
-    public function post(array $data){}
-
-    public function delete($name){}
-
-    public function findOne(){}
-
-    public function findAll(){}
 }
 
