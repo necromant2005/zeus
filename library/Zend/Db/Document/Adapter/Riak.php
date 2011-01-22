@@ -62,7 +62,7 @@ class Riak extends DbDocument\AbstractAdapter
         return $response->isSuccessful();
     }
 
-    public function findOne($collectionName, array $query, array $fields=array())
+    public function findOne($collectionName, $query, array $fields=array())
     {
         $this->_connect();
         $request = $this->_buildRequest($collectionName, $query, $fields);
@@ -75,7 +75,7 @@ class Riak extends DbDocument\AbstractAdapter
         return $document;
     }
 
-    public function find($collectionName, array $query, array $fields=array())
+    public function find($collectionName, $query, array $fields=array())
     {
         $this->_connect();
         $request = $this->_buildRequest($collectionName, $query, $fields);

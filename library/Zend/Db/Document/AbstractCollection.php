@@ -43,7 +43,7 @@ abstract class AbstractCollection
         return $this->_adapter->findOne($this->_name, $query, $fields);
     }
 
-    public function find(array $query, array $fields=array())
+    public function find($query, array $fields=array())
     {
         return $this->_adapter->find($this->_name, $query, $fields);
     }

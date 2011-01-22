@@ -20,5 +20,15 @@ class Voldemort extends DbDocument\AbstractAdapter
     {
 
     }
+
+    public function findOne($collectionName, $query, array $fields=array())
+    {
+
+    }
+
+    public function find($collectionName, $query, array $fields=array())
+    {
+
+    }
 }
 

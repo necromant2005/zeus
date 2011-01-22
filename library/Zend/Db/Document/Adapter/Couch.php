@@ -87,7 +87,7 @@ class Couch extends DbDocument\AbstractAdapter
         return true;
     }
 
-    public function findOne($collectionName, array $query)
+    public function findOne($collectionName, $query, array $fields=array())
     {
         $this->_connect();
         $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=1&descending=true',
@@ -101,7 +101,7 @@ class Couch extends DbDocument\AbstractAdapter
         }
     }
 
-    public function find($collectionName, array $query)
+    public function find($collectionName, $query, array $fields=array())
     {
         $this->_connect();
         $response = $this->_connection->restPost($this->_generatePath(self::PATH_TEMPORARY_VIEW) . '?limit=10&descending=true',

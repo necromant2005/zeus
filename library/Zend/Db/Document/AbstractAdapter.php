@@ -32,5 +32,9 @@ abstract class AbstractAdapter
     abstract protected function _connect();
 
     abstract public function getCollection($name);
+
+    abstract public function findOne($collectionName, $query, array $fields=array());
+
+    abstract public function find($collectionName, $query, array $fields=array());
 }
 

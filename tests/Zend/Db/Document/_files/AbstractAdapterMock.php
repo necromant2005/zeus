@@ -17,5 +17,15 @@ class AbstractAdapterMock extends DbDocument\AbstractAdapter
     {
          return new AbstractCollectionMock($this, $name);
     }
+
+    public function findOne($collectionName, $query, array $fields=array())
+    {
+        return null;
+    }
+
+    public function find($collectionName, $query, array $fields=array())
+    {
+        return null;
+    }
 }
 
